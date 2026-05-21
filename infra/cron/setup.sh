@@ -30,6 +30,10 @@ fi
 CRON_LINE="0 */4 * * * cd ${REPO_DIR} && set -a && . ${REPO_DIR}/.env && set +a && npx hardhat run scripts/update-intents.ts --network ${NETWORK} >> ${LOG_FILE} 2>&1"
 
 if [[ "${1:-}" == "--install" ]]; then
+  if crontab -l 2>/dev/null | grep -Fx "${CRON_LINE}" > /dev/null; then
+    echo "Crontab entry already exists — nothing changed."
+    exit 0
+  fi
   (crontab -l 2>/dev/null; echo "${CRON_LINE}") | crontab -
   echo "Crontab entry installed (every 4 hours, network: ${NETWORK})."
   echo "Logs will be written to ${LOG_FILE}"
