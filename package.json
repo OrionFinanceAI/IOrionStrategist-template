@@ -8,11 +8,16 @@
   },
   "scripts": {
     "prepare": "husky",
+    "check": "npm run compile && npm run type-check",
     "compile": "hardhat compile",
-    "deploy": "hardhat run scripts/deploy.ts",
-    "update-intents": "hardhat run scripts/update-intents.ts",
-    "test": "hardhat test",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
+    "update-intents:sepolia:dry": "DRY_RUN=1 hardhat run scripts/update-intents.ts --network sepolia",
+    "update-intents:sepolia": "hardhat run scripts/update-intents.ts --network sepolia",
+    "update-intents:mainnet:dry": "DRY_RUN=1 hardhat run scripts/update-intents.ts --network mainnet",
+    "update-intents:mainnet": "hardhat run scripts/update-intents.ts --network mainnet",
+    "test": "hardhat test"
   },
   "dependencies": {
     "@orion-finance/protocol": "github:OrionFinanceAI/protocol#23148945f35cb623f93fba5b6980c44a1473977c",
