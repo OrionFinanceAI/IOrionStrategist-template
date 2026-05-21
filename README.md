@@ -178,8 +178,9 @@ Logs are written to `/var/log/orion-update-intents.log`.
 2. **Store secrets in AWS Secrets Manager**
 
    ```bash
-   aws secretsmanager create-secret --name orion/PRIVATE_KEY --secret-string '0x...'
-   aws secretsmanager create-secret --name orion/RPC_URL     --secret-string 'https://...'
+   aws secretsmanager create-secret --name orion/PRIVATE_KEY     --secret-string '0x...'
+   aws secretsmanager create-secret --name orion/RPC_URL_MAINNET  --secret-string 'https://...'
+   aws secretsmanager create-secret --name orion/VAULT_ADDRESS    --secret-string '0xAAA...,0xBBB...'
    ```
 
 3. **Register the task** — fill in the `<PLACEHOLDERS>` in `infra/ecs/task-definition.json`, then:
