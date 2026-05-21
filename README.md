@@ -137,7 +137,7 @@ Dry-run (no transactions, all vaults still resolved and checked):
 DRY_RUN=1 VAULT_ADDRESS=0xAAA...,0xBBB... npx hardhat run scripts/update-intents.ts --network sepolia
 ```
 
-Exit code is `1` if any `submitIntent()` call failed — useful for cron/ECS alerting.
+Exit code is `1` on any failure — including vault read errors (e.g. `strategist()` reverts or the strategist fails the ERC-165 check) as well as failed `submitIntent()` calls — useful for cron/ECS alerting.
 
 ### Environment variables
 

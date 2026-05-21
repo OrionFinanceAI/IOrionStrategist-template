@@ -149,11 +149,15 @@ async function main(): Promise<void> {
   const dryRun = process.env.DRY_RUN === "1";
 
   const rawAddresses = requireEnv("VAULT_ADDRESS");
-  const vaultAddresses = rawAddresses
-    .split(",")
-    .map((a) => a.trim())
-    .filter(Boolean)
-    .map((a) => ethers.getAddress(a));
+  const vaultAddresses = [
+    ...new Set(
+      rawAddresses
+        .split(",")
+        .map((a) => a.trim())
+        .filter(Boolean)
+        .map((a) => ethers.getAddress(a)),
+    ),
+  ];
 
   if (vaultAddresses.length === 0) {
     console.error("VAULT_ADDRESS must contain at least one address.");
