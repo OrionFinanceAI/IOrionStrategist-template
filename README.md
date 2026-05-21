@@ -42,8 +42,9 @@ npm run compile
 # Deploy all three strategist variants
 npx hardhat run scripts/deploy.ts --network sepolia
 
-# Or via npm (pass network after --)
-npm run deploy -- --network sepolia
+# Or via npm
+npm run deploy:sepolia
+npm run deploy:mainnet
 
 # Deploy a single contract
 DEPLOY_CONTRACTS=tvl npx hardhat run scripts/deploy.ts --network sepolia
@@ -62,7 +63,7 @@ A deployment summary is written to `deployments/<network>-<timestamp>.json` (git
 | `RPC_URL_SEPOLIA` | For Sepolia | — | Sepolia JSON-RPC endpoint |
 | `RPC_URL_MAINNET` | For mainnet | — | Mainnet JSON-RPC endpoint |
 | `RPC_URL` | For `--network network` | — | Generic/fallback RPC endpoint |
-| `ORION_CONFIG_ADDRESS` | No | `0x80fdF5...` (Sepolia) | OrionConfig contract |
+| `ORION_CONFIG_ADDRESS` | No | `0xbDe3025d...` (Sepolia) | OrionConfig contract |
 | `VAULT_ADDRESS` | No | — | If set, calls `setVault()` on each deployed contract |
 | `STRATEGIST_K` | No | `10` | Top-K assets to select (1–65535) |
 | `DEPLOY_CONTRACTS` | No | `tvl,apy-equal,apy-weighted` | Comma-separated contracts to deploy |
@@ -118,19 +119,36 @@ Verification publishes the source code to Etherscan so anyone can audit the logi
 
 ## Run rebalancing manually
 
-```bash
-npx hardhat run scripts/update-intents.ts --network mainnet
-```
-
-The script scans all transparent vaults in `OrionConfig`, identifies those with an `IOrionStrategist` (via ERC-165), and calls `submitIntent()` on each as the `PRIVATE_KEY` signer (the strategist owner).
-
-Dry-run (no transactions):
+Provide one vault address or a comma-separated list. The script reads the `strategist()` on each vault, verifies it implements `IOrionStrategist` (ERC-165), and calls `submitIntent()` as the `PRIVATE_KEY` signer (the strategist owner).
 
 ```bash
-DRY_RUN=1 npx hardhat run scripts/update-intents.ts --network mainnet
+# Single vault
+VAULT_ADDRESS=0xAAA... npx hardhat run scripts/update-intents.ts --network sepolia
+
+# Multiple vaults
+VAULT_ADDRESS=0xAAA...,0xBBB...,0xCCC... npx hardhat run scripts/update-intents.ts --network sepolia
+
+# Or via npm
+npm run update-intents:sepolia
+npm run update-intents:mainnet
 ```
 
-Exit code is `1` if any `submitIntent()` call failed — useful for cron/ECS alerting.
+Dry-run (no transactions, all vaults still resolved and checked):
+
+```bash
+DRY_RUN=1 VAULT_ADDRESS=0xAAA...,0xBBB... npx hardhat run scripts/update-intents.ts --network sepolia
+```
+
+Exit code is `1` on any failure — including vault read errors (e.g. `strategist()` reverts or the strategist fails the ERC-165 check) as well as failed `submitIntent()` calls — useful for cron/ECS alerting.
+
+### Environment variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `PRIVATE_KEY` | Yes | — | Strategist owner key |
+| `VAULT_ADDRESS` | Yes | — | Vault address or comma-separated list of vault addresses |
+| `ORION_STRATEGIST_INTERFACE_ID` | No | — | Override ERC-165 check to a specific bytes4 |
+| `DRY_RUN` | No | — | Set `1` to log only — no transactions sent |
 
 ---
 
@@ -160,8 +178,9 @@ Logs are written to `/var/log/orion-update-intents.log`.
 2. **Store secrets in AWS Secrets Manager**
 
    ```bash
-   aws secretsmanager create-secret --name orion/PRIVATE_KEY --secret-string '0x...'
-   aws secretsmanager create-secret --name orion/RPC_URL     --secret-string 'https://...'
+   aws secretsmanager create-secret --name orion/PRIVATE_KEY     --secret-string '0x...'
+   aws secretsmanager create-secret --name orion/RPC_URL_MAINNET  --secret-string 'https://...'
+   aws secretsmanager create-secret --name orion/VAULT_ADDRESS    --secret-string '0xAAA...,0xBBB...'
    ```
 
 3. **Register the task** — fill in the `<PLACEHOLDERS>` in `infra/ecs/task-definition.json`, then:
