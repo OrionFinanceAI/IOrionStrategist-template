@@ -159,7 +159,16 @@ async function main(): Promise<void> {
   const pk = requireEnv("PRIVATE_KEY");
   const signer = new ethers.Wallet(pk, ethers.provider);
   const configAddr = ethers.getAddress(process.env.ORION_CONFIG_ADDRESS ?? DEFAULT_ORION_CONFIG);
-  const forcedId = process.env.ORION_STRATEGIST_INTERFACE_ID?.toLowerCase();
+  const rawForcedId = process.env.ORION_STRATEGIST_INTERFACE_ID;
+  let forcedId: string | undefined;
+  if (rawForcedId !== undefined) {
+    const normalized = rawForcedId.toLowerCase().replace(/^0x/, "");
+    if (!/^[0-9a-f]{8}$/.test(normalized)) {
+      console.error(`ORION_STRATEGIST_INTERFACE_ID must be a 4-byte hex value (e.g. 0x2a588280), got: ${rawForcedId}`);
+      process.exit(1);
+    }
+    forcedId = `0x${normalized}`;
+  }
   const dryRun = process.env.DRY_RUN === "1";
 
   console.log();
