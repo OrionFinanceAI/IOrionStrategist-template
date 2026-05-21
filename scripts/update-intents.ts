@@ -161,7 +161,7 @@ async function main(): Promise<void> {
   const configAddr = ethers.getAddress(process.env.ORION_CONFIG_ADDRESS ?? DEFAULT_ORION_CONFIG);
   const rawForcedId = process.env.ORION_STRATEGIST_INTERFACE_ID;
   let forcedId: string | undefined;
-  if (rawForcedId !== undefined) {
+  if (rawForcedId) {
     const normalized = rawForcedId.toLowerCase().replace(/^0x/, "");
     if (!/^[0-9a-f]{8}$/.test(normalized)) {
       console.error(`ORION_STRATEGIST_INTERFACE_ID must be a 4-byte hex value (e.g. 0x2a588280), got: ${rawForcedId}`);
