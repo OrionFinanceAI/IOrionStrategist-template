@@ -42,8 +42,9 @@ npm run compile
 # Deploy all three strategist variants
 npx hardhat run scripts/deploy.ts --network sepolia
 
-# Or via npm (pass network after --)
-npm run deploy -- --network sepolia
+# Or via npm
+npm run deploy:sepolia
+npm run deploy:mainnet
 
 # Deploy a single contract
 DEPLOY_CONTRACTS=tvl npx hardhat run scripts/deploy.ts --network sepolia
@@ -128,7 +129,8 @@ VAULT_ADDRESS=0xAAA... npx hardhat run scripts/update-intents.ts --network sepol
 VAULT_ADDRESS=0xAAA...,0xBBB...,0xCCC... npx hardhat run scripts/update-intents.ts --network sepolia
 
 # Or via npm
-npm run update-intents -- --network sepolia
+npm run update-intents:sepolia
+npm run update-intents:mainnet
 ```
 
 Dry-run (no transactions, all vaults still resolved and checked):

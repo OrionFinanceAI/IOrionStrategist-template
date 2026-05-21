@@ -8,8 +8,9 @@
     "       docker push <ECR_REPO_URI>:latest",
     "",
     "  2. Store secrets in AWS Secrets Manager:",
-    "       aws secretsmanager create-secret --name orion/PRIVATE_KEY --secret-string '0x...'",
-    "       aws secretsmanager create-secret --name orion/RPC_URL     --secret-string 'https://...'",
+    "       aws secretsmanager create-secret --name orion/PRIVATE_KEY    --secret-string '0x...'",
+    "       aws secretsmanager create-secret --name orion/RPC_URL_MAINNET --secret-string 'https://...'",
+    "       aws secretsmanager create-secret --name orion/VAULT_ADDRESS   --secret-string '0xAAA...,0xBBB...'",
     "",
     "  3. Register this task definition (replace placeholders):",
     "       aws ecs register-task-definition --cli-input-json file://infra/ecs/task-definition.json",
@@ -62,24 +63,19 @@
       "name": "update-intents",
       "image": "<ECR_REPO_URI>:latest",
       "essential": true,
-      "environment": [
-        {
-          "name": "ORION_CONFIG_ADDRESS",
-          "value": "<MAINNET_ORION_CONFIG_ADDRESS>"
-        },
-        {
-          "name": "STRATEGIST_K",
-          "value": "10"
-        }
-      ],
+      "environment": [],
       "secrets": [
         {
           "name": "PRIVATE_KEY",
           "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:orion/PRIVATE_KEY"
         },
         {
-          "name": "RPC_URL",
-          "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:orion/RPC_URL"
+          "name": "RPC_URL_MAINNET",
+          "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:orion/RPC_URL_MAINNET"
+        },
+        {
+          "name": "VAULT_ADDRESS",
+          "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:orion/VAULT_ADDRESS"
         }
       ],
       "logConfiguration": {
