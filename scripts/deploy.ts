@@ -11,7 +11,7 @@
  *   RPC_URL                 — JSON-RPC endpoint
  *
  * Optional env:
- *   ORION_CONFIG_ADDRESS    — default: 0x80fdF5E20e565E1345DC9eE1dbc36Edb3f292f2E (Sepolia)
+ *   ORION_CONFIG_ADDRESS    — default: 0xbDe3025d08681a02a1c6cf70375baBe2152DD06f (Sepolia)
  *   VAULT_ADDRESS           — if set, calls setVault() on each deployed contract
  *   STRATEGIST_K            — top-K count, default: 10
  *   DEPLOY_CONTRACTS        — comma-separated subset to deploy, default: "tvl,apy-equal,apy-weighted"
@@ -28,7 +28,7 @@ import type { HardhatEthers } from "@nomicfoundation/hardhat-ethers/types";
 import fs from "node:fs";
 import path from "node:path";
 
-const DEFAULT_ORION_CONFIG = "0x80fdF5E20e565E1345DC9eE1dbc36Edb3f292f2E";
+const DEFAULT_ORION_CONFIG = "0xbDe3025d08681a02a1c6cf70375baBe2152DD06f";
 const WEIGHTING_EQUAL = 0n;
 const WEIGHTING_APY = 1n;
 
