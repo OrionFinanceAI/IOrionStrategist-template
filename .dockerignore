@@ -1,0 +1,11 @@
+node_modules/
+artifacts/
+cache/
+dist/
+deployments/
+.env
+.git/
+.github/
+.husky/
+*.md
+infra/cron/

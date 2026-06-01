@@ -15,7 +15,7 @@ set -euo pipefail
 
 NETWORK="${NETWORK:-mainnet}"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-LOG_FILE="/var/log/orion-update-intents.log"
+LOG_FILE="/var/log/iorion-strategist-template.log"
 
 # Validate that .env exists and has PRIVATE_KEY
 if [[ ! -f "${REPO_DIR}/.env" ]]; then

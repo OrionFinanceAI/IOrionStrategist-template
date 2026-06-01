@@ -164,7 +164,7 @@ bash infra/cron/setup.sh
 NETWORK=mainnet bash infra/cron/setup.sh --install
 ```
 
-Logs are written to `/var/log/orion-update-intents.log`.
+Logs are written to `/var/log/iorion-strategist-template.log`.
 
 ### Option B — AWS ECS (Fargate + EventBridge)
 
