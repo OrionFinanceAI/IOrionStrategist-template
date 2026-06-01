@@ -13,9 +13,9 @@
     "type-check": "tsc --noEmit",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
-    "update-intents:sepolia:dry": "DRY_RUN=1 hardhat run scripts/update-intents.ts --network sepolia",
+    "update-intents:sepolia:dry": "cross-env DRY_RUN=1 hardhat run scripts/update-intents.ts --network sepolia",
     "update-intents:sepolia": "hardhat run scripts/update-intents.ts --network sepolia",
-    "update-intents:mainnet:dry": "DRY_RUN=1 hardhat run scripts/update-intents.ts --network mainnet",
+    "update-intents:mainnet:dry": "cross-env DRY_RUN=1 hardhat run scripts/update-intents.ts --network mainnet",
     "update-intents:mainnet": "hardhat run scripts/update-intents.ts --network mainnet",
     "test": "hardhat test"
   },
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.9",
+    "cross-env": "^7.0.3",
     "@nomicfoundation/hardhat-verify": "^3.0.15",
     "@types/node": "^25.0.0",
     "dotenv": "^17.0.0",

@@ -4,3 +4,4 @@ cache/
 dist/
 .env
 deployments/
+logs/

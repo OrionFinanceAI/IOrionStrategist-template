@@ -3,9 +3,9 @@
     "AWS ECS Fargate task definition for running update-intents on a schedule.",
     "",
     "Setup steps:",
-    "  1. Build and push the Docker image:",
-    "       docker build -f infra/ecs/Dockerfile -t <ECR_REPO_URI>:latest .",
-    "       docker push <ECR_REPO_URI>:latest",
+    "  1. Build and push the Docker image (CI pushes <ECR_REPO_URI>:<GIT_SHA>):",
+    "       docker build -f infra/ecs/Dockerfile -t <ECR_REPO_URI>:<GIT_SHA> .",
+    "       docker push <ECR_REPO_URI>:<GIT_SHA>",
     "",
     "  2. Store secrets in AWS Secrets Manager:",
     "       aws secretsmanager create-secret --name orion/PRIVATE_KEY    --secret-string '0x...'",
@@ -61,9 +61,14 @@
   "containerDefinitions": [
     {
       "name": "update-intents",
-      "image": "<ECR_REPO_URI>:latest",
+      "image": "<ECR_REPO_URI>:<GIT_SHA>",
       "essential": true,
-      "environment": [],
+      "environment": [
+        {
+          "name": "HARDHAT_NETWORK",
+          "value": "mainnet"
+        }
+      ],
       "secrets": [
         {
           "name": "PRIVATE_KEY",

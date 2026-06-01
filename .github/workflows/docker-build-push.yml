@@ -19,6 +19,7 @@ jobs:
     # id-token: write is required only for the AWS OIDC credential step below.
     permissions:
       contents: read
+      # Required for AWS OIDC authentication (role assumption without long-lived credentials)
       id-token: write
 
     steps:
@@ -67,7 +68,9 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
       - name: Inspect image
+        env:
+          IMAGE_TAG: ${{ steps.meta.outputs.version }}
         run: |
+          docker buildx imagetools inspect "${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}"
           docker buildx imagetools inspect "${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.meta.outputs.version }}"
