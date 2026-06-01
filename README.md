@@ -164,15 +164,16 @@ bash infra/cron/setup.sh
 NETWORK=mainnet bash infra/cron/setup.sh --install
 ```
 
-Logs are written to `/var/log/iorion-strategist-template.log`.
+Logs are written to `logs/iorion-strategist-template.log` in the repo root (see `infra/cron/setup.sh`).
 
 ### Option B — AWS ECS (Fargate + EventBridge)
 
-1. **Build and push the image**
+1. **Build and push the image** (tag with the commit SHA — CI uses the same strategy)
 
    ```bash
-   docker build -f infra/ecs/Dockerfile -t <ECR_REPO_URI>:latest .
-   docker push <ECR_REPO_URI>:latest
+   GIT_SHA=$(git rev-parse --short HEAD)
+   docker build -f infra/ecs/Dockerfile -t <ECR_REPO_URI>:${GIT_SHA} .
+   docker push <ECR_REPO_URI>:${GIT_SHA}
    ```
 
 2. **Store secrets in AWS Secrets Manager**

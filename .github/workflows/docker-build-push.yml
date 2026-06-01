@@ -72,5 +72,5 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.meta.outputs.version }}
         run: |
-          docker buildx imagetools inspect "${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}"
-          docker buildx imagetools inspect "${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.meta.outputs.version }}"
+          IMAGE_REF="${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}"
+          docker buildx imagetools inspect "${IMAGE_REF}"
