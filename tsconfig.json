@@ -8,8 +8,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
-    "rootDir": ".",
-    "baseUrl": "."
+    "rootDir": "."
   },
   "include": ["scripts/**/*.ts", "hardhat.config.ts"],
   "exclude": ["node_modules", "dist", "artifacts", "cache"]

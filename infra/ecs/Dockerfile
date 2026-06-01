@@ -4,6 +4,7 @@ WORKDIR /app
 
 # Install dependencies first for better layer caching
 COPY package*.json ./
+ENV HUSKY=0
 RUN npm ci
 
 # Copy source and transfer ownership to the non-root node user

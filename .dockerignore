@@ -2,6 +2,10 @@ node_modules/
 artifacts/
 cache/
 dist/
-.env
 deployments/
-logs/
+.env
+.git/
+.github/
+.husky/
+*.md
+infra/cron/
