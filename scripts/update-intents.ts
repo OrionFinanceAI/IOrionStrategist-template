@@ -111,7 +111,7 @@ async function processVault(
   try {
     strategistAddr = ethers.getAddress(await vault.strategist());
   } catch (e) {
-    const message = (e as Error).message;
+    const message = e instanceof Error ? e.message : String(e);
     console.error(JSON.stringify({ event: "submit_intent_failed", reason: "strategist_read_failed", network: networkName, vault: vaultAddr, message }));
     console.log(`${idx}  ${c.red}✗${c.reset}  ${vaultAddr}`);
     console.log(`       ${c.red}strategist() read failed:${c.reset} ${message}\n`);
@@ -145,7 +145,7 @@ async function processVault(
     console.log(`       ${c.dim}tx${c.reset}           ${c.green}${txLink(receipt?.hash ?? "", networkName)}${c.reset}\n`);
     return "ok";
   } catch (e) {
-    const message = (e as Error).message;
+    const message = e instanceof Error ? e.message : String(e);
     console.error(JSON.stringify({ event: "submit_intent_failed", reason: "submit_intent_tx_failed", network: networkName, vault: vaultAddr, strategist: strategistAddr, message }));
     console.log(`       ${c.red}failed${c.reset}       ${message}\n`);
     return "failed";
