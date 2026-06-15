@@ -16,6 +16,9 @@
  *
  * Exit code 1 if any submitIntent() call failed.
  *
+ * Failures emit a single JSON line on stderr for CloudWatch metric filters, e.g.:
+ *   { "event": "submit_intent_failed", "reason": "submit_intent_tx_failed", ... }
+ *
  * Usage:
  *   npx hardhat run scripts/update-intents.ts --network sepolia
  *   VAULT_ADDRESS=0xAAA...,0xBBB... npx hardhat run scripts/update-intents.ts --network sepolia
@@ -73,6 +76,44 @@ function requireEnv(name: string): string {
   return v;
 }
 
+/** Stable event name for CloudWatch Logs metric filters. */
+const SUBMIT_INTENT_FAILED_EVENT = "submit_intent_failed";
+const SUBMIT_INTENT_RUN_FAILED_EVENT = "submit_intent_run_failed";
+
+type SubmitIntentFailureReason =
+  | "strategist_read_failed"
+  | "strategist_not_contract"
+  | "strategist_interface_mismatch"
+  | "submit_intent_tx_failed"
+  | "fatal";
+
+function logSubmitIntentFailure(
+  network: string,
+  reason: SubmitIntentFailureReason,
+  fields: { vault?: string; strategist?: string; message?: string } = {},
+): void {
+  console.error(
+    JSON.stringify({
+      event: SUBMIT_INTENT_FAILED_EVENT,
+      reason,
+      network,
+      ...fields,
+    }),
+  );
+}
+
+function logSubmitIntentRunFailed(network: string, succeeded: number, failed: number, total: number): void {
+  console.error(
+    JSON.stringify({
+      event: SUBMIT_INTENT_RUN_FAILED_EVENT,
+      network,
+      succeeded,
+      failed,
+      total,
+    }),
+  );
+}
+
 async function isContract(provider: Provider, address: string): Promise<boolean> {
   const code = await provider.getCode(address);
   return code !== "0x" && code.length > 2;
@@ -108,8 +149,10 @@ async function processVault(
   try {
     strategistAddr = ethers.getAddress(await vault.strategist());
   } catch (e) {
+    const message = (e as Error).message;
+    logSubmitIntentFailure(networkName, "strategist_read_failed", { vault: vaultAddr, message });
     console.log(`${idx}  ${c.red}✗${c.reset}  ${vaultAddr}`);
-    console.log(`       ${c.red}strategist() read failed:${c.reset} ${(e as Error).message}\n`);
+    console.log(`       ${c.red}strategist() read failed:${c.reset} ${message}\n`);
     return "failed";
   }
 
@@ -117,11 +160,13 @@ async function processVault(
   console.log(`       ${c.dim}strategist${c.reset}  ${strategistAddr}`);
 
   if (!(await isContract(ethers.provider, strategistAddr))) {
+    logSubmitIntentFailure(networkName, "strategist_not_contract", { vault: vaultAddr, strategist: strategistAddr });
     console.log(`       ${c.red}✗${c.reset}  not a contract\n`);
     return "failed";
   }
 
   if (!(await isOrionStrategist(ethers.provider, strategistAddr, forcedId))) {
+    logSubmitIntentFailure(networkName, "strategist_interface_mismatch", { vault: vaultAddr, strategist: strategistAddr });
     console.log(`       ${c.red}✗${c.reset}  does not support IOrionStrategist (ERC-165 check failed)\n`);
     return "failed";
   }
@@ -138,7 +183,13 @@ async function processVault(
     console.log(`       ${c.dim}tx${c.reset}           ${c.green}${txLink(receipt?.hash ?? "", networkName)}${c.reset}\n`);
     return "ok";
   } catch (e) {
-    console.log(`       ${c.red}failed${c.reset}       ${(e as Error).message}\n`);
+    const message = (e as Error).message;
+    logSubmitIntentFailure(networkName, "submit_intent_tx_failed", {
+      vault: vaultAddr,
+      strategist: strategistAddr,
+      message,
+    });
+    console.log(`       ${c.red}failed${c.reset}       ${message}\n`);
     return "failed";
   }
 }
@@ -200,10 +251,15 @@ async function main(): Promise<void> {
   console.log(SEP);
   console.log();
 
-  if (txFailed > 0) process.exit(1);
+  if (txFailed > 0) {
+    logSubmitIntentRunFailed(networkName, txOk, txFailed, vaultAddresses.length);
+    process.exit(1);
+  }
 }
 
 main().catch((e) => {
+  const message = e instanceof Error ? e.message : String(e);
+  logSubmitIntentFailure(networkName, "fatal", { message });
   console.error(e);
   process.exit(1);
 });
