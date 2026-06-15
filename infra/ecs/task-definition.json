@@ -4,7 +4,7 @@
     "",
     "Setup steps:",
     "  1. Build and push the Docker image (CI pushes <ECR_REPO_URI>:<GIT_SHA>):",
-    "       docker build -f infra/ecs/Dockerfile -t <ECR_REPO_URI>:<GIT_SHA> .",
+    "       docker build --platform linux/amd64 -f infra/ecs/Dockerfile -t <ECR_REPO_URI>:<GIT_SHA> .",
     "       docker push <ECR_REPO_URI>:<GIT_SHA>",
     "",
     "  2. Store secrets in AWS Secrets Manager:",
@@ -57,6 +57,10 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
   "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {

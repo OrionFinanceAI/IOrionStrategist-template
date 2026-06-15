@@ -16,6 +16,9 @@
  *
  * Exit code 1 if any submitIntent() call failed.
  *
+ * Failures emit a single JSON line on stderr for CloudWatch metric filters, e.g.:
+ *   { "event": "submit_intent_failed", "reason": "submit_intent_tx_failed", ... }
+ *
  * Usage:
  *   npx hardhat run scripts/update-intents.ts --network sepolia
  *   VAULT_ADDRESS=0xAAA...,0xBBB... npx hardhat run scripts/update-intents.ts --network sepolia
@@ -108,8 +111,10 @@ async function processVault(
   try {
     strategistAddr = ethers.getAddress(await vault.strategist());
   } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(JSON.stringify({ event: "submit_intent_failed", reason: "strategist_read_failed", network: networkName, vault: vaultAddr, message }));
     console.log(`${idx}  ${c.red}✗${c.reset}  ${vaultAddr}`);
-    console.log(`       ${c.red}strategist() read failed:${c.reset} ${(e as Error).message}\n`);
+    console.log(`       ${c.red}strategist() read failed:${c.reset} ${message}\n`);
     return "failed";
   }
 
@@ -117,11 +122,13 @@ async function processVault(
   console.log(`       ${c.dim}strategist${c.reset}  ${strategistAddr}`);
 
   if (!(await isContract(ethers.provider, strategistAddr))) {
+    console.error(JSON.stringify({ event: "submit_intent_failed", reason: "strategist_not_contract", network: networkName, vault: vaultAddr, strategist: strategistAddr }));
     console.log(`       ${c.red}✗${c.reset}  not a contract\n`);
     return "failed";
   }
 
   if (!(await isOrionStrategist(ethers.provider, strategistAddr, forcedId))) {
+    console.error(JSON.stringify({ event: "submit_intent_failed", reason: "strategist_interface_mismatch", network: networkName, vault: vaultAddr, strategist: strategistAddr }));
     console.log(`       ${c.red}✗${c.reset}  does not support IOrionStrategist (ERC-165 check failed)\n`);
     return "failed";
   }
@@ -138,7 +145,9 @@ async function processVault(
     console.log(`       ${c.dim}tx${c.reset}           ${c.green}${txLink(receipt?.hash ?? "", networkName)}${c.reset}\n`);
     return "ok";
   } catch (e) {
-    console.log(`       ${c.red}failed${c.reset}       ${(e as Error).message}\n`);
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(JSON.stringify({ event: "submit_intent_failed", reason: "submit_intent_tx_failed", network: networkName, vault: vaultAddr, strategist: strategistAddr, message }));
+    console.log(`       ${c.red}failed${c.reset}       ${message}\n`);
     return "failed";
   }
 }
@@ -204,6 +213,8 @@ async function main(): Promise<void> {
 }
 
 main().catch((e) => {
+  const message = e instanceof Error ? e.message : String(e);
+  console.error(JSON.stringify({ event: "submit_intent_failed", reason: "fatal", network: networkName, message }));
   console.error(e);
   process.exit(1);
 });

@@ -16,8 +16,7 @@
     "update-intents:sepolia:dry": "cross-env DRY_RUN=1 hardhat run scripts/update-intents.ts --network sepolia",
     "update-intents:sepolia": "hardhat run scripts/update-intents.ts --network sepolia",
     "update-intents:mainnet:dry": "cross-env DRY_RUN=1 hardhat run scripts/update-intents.ts --network mainnet",
-    "update-intents:mainnet": "hardhat run scripts/update-intents.ts --network mainnet",
-    "test": "hardhat test"
+    "update-intents:mainnet": "hardhat run scripts/update-intents.ts --network mainnet"
   },
   "dependencies": {
     "@orion-finance/protocol": "github:OrionFinanceAI/protocol#23148945f35cb623f93fba5b6980c44a1473977c",
@@ -25,13 +24,12 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.9",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "@nomicfoundation/hardhat-verify": "^3.0.15",
     "@types/node": "^25.0.0",
     "dotenv": "^17.0.0",
     "ethers": "^6.15.0",
     "hardhat": "^3.4.1",
-    "ts-node": "^10.9.2",
     "husky": "^9.1.7",
     "typescript": "^6.0.0"
   }
