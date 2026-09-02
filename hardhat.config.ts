@@ -9,11 +9,11 @@ const config = defineConfig({
   plugins: [hardhatEthers, hardhatVerify],
 
   solidity: {
-    // Compile the strategist contracts directly from the installed protocol package.
-    // Run `npm update @orion-finance/protocol` to pick up upstream contract changes.
+    // Compile the strategist implementations from the installed plugins package.
+    // Run `npm update @orion-finance/plugins` to pick up upstream contract changes.
     npmFilesToBuild: [
-      "@orion-finance/protocol/contracts/strategies/KBestApyStrategist.sol",
-      "@orion-finance/protocol/contracts/strategies/KBestTvlWeightedAverage.sol",
+      "@orion-finance/plugins/contracts/strategies/KBestApyStrategist.sol",
+      "@orion-finance/plugins/contracts/strategies/KBestTvlWeightedAverage.sol",
     ],
     compilers: [
       {

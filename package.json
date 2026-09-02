@@ -19,7 +19,8 @@
     "update-intents:mainnet": "hardhat run scripts/update-intents.ts --network mainnet"
   },
   "dependencies": {
-    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#23148945f35cb623f93fba5b6980c44a1473977c",
+    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#664f7a87ad1d8348599b47915df262e012e6cfad",
+    "@orion-finance/plugins": "github:OrionFinanceAI/protocol-plugins#fe048dff2b5ca363f698dc88b7e24c1d50591863",
     "@openzeppelin/contracts": "^5.6.0"
   },
   "devDependencies": {

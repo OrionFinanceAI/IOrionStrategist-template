@@ -6,7 +6,7 @@ Clone this repo, fill in a `.env`, and you're ready to deploy or run automated r
 
 ## Strategist contracts
 
-This template deploys the following strategists from the Orion Finance protocol (sourced directly via npm — no local copies):
+This template deploys the following strategists from [`protocol-plugins`](https://github.com/OrionFinanceAI/protocol-plugins) (sourced directly via npm — no local copies):
 
 | Key | Contract | Strategy |
 |---|---|---|
@@ -196,10 +196,10 @@ Logs are written to `logs/iorion-strategist-template.log` in the repo root (see 
 
 ## Keeping contracts up to date
 
-Contract source lives in the public [OrionFinanceAI/protocol](https://github.com/OrionFinanceAI/protocol) repo. To pull the latest version:
+Contract source lives in the public [OrionFinanceAI/protocol-plugins](https://github.com/OrionFinanceAI/protocol-plugins) repo. To pull the latest version:
 
 ```bash
-npm update @orion-finance/protocol
+npm update @orion-finance/plugins
 npm run compile
 ```
 
