@@ -8,7 +8,8 @@
   },
   "scripts": {
     "prepare": "husky",
-    "check": "npm run compile && npm run type-check",
+    "check": "npm run compile && npm run type-check && npm test",
+    "test": "hardhat test",
     "compile": "hardhat compile",
     "type-check": "tsc --noEmit",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
@@ -19,19 +20,22 @@
     "update-intents:mainnet": "hardhat run scripts/update-intents.ts --network mainnet"
   },
   "dependencies": {
-    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#664f7a87ad1d8348599b47915df262e012e6cfad",
+    "@openzeppelin/contracts": "^5.6.0",
     "@orion-finance/plugins": "github:OrionFinanceAI/protocol-plugins#fe048dff2b5ca363f698dc88b7e24c1d50591863",
-    "@openzeppelin/contracts": "^5.6.0"
+    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#664f7a87ad1d8348599b47915df262e012e6cfad"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.9",
-    "cross-env": "^10.1.0",
+    "@nomicfoundation/hardhat-mocha": "^3.1.0",
     "@nomicfoundation/hardhat-verify": "^3.0.15",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^25.0.0",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.0.0",
     "ethers": "^6.15.0",
     "hardhat": "^3.4.1",
     "husky": "^9.1.7",
+    "mocha": "^11.8.0",
     "typescript": "^6.0.0"
   }
 }

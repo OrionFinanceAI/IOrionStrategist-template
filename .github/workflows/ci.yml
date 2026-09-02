@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   ci:
-    name: Compile & type check
+    name: Compile, type check & test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
@@ -28,3 +28,4 @@ jobs:
       - run: npm ci
       - run: npx hardhat compile
       - run: npx tsc --noEmit
+      - run: npm test
