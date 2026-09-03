@@ -1,19 +1,21 @@
 import * as dotenv from "dotenv";
 import { defineConfig } from "hardhat/config";
 import hardhatEthers from "@nomicfoundation/hardhat-ethers";
+import hardhatMocha from "@nomicfoundation/hardhat-mocha";
 import hardhatVerify from "@nomicfoundation/hardhat-verify";
 
 dotenv.config({ quiet: true });
 
 const config = defineConfig({
-  plugins: [hardhatEthers, hardhatVerify],
+  plugins: [hardhatEthers, hardhatMocha, hardhatVerify],
 
   solidity: {
-    // Compile the strategist contracts directly from the installed protocol package.
-    // Run `npm update @orion-finance/protocol` to pick up upstream contract changes.
+    // Compile the strategist implementations from the installed plugins package.
+    // The package is SHA-pinned in package.json; change that SHA and run `npm install`
+    // to pick up upstream contract changes (`npm update` will not move a git pin).
     npmFilesToBuild: [
-      "@orion-finance/protocol/contracts/strategies/KBestApyStrategist.sol",
-      "@orion-finance/protocol/contracts/strategies/KBestTvlWeightedAverage.sol",
+      "@orion-finance/plugins/contracts/strategies/KBestApyStrategist.sol",
+      "@orion-finance/plugins/contracts/strategies/KBestTvlWeightedAverage.sol",
     ],
     compilers: [
       {

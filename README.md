@@ -6,7 +6,7 @@ Clone this repo, fill in a `.env`, and you're ready to deploy or run automated r
 
 ## Strategist contracts
 
-This template deploys the following strategists from the Orion Finance protocol (sourced directly via npm — no local copies):
+This template deploys the following strategists from [`protocol-plugins`](https://github.com/OrionFinanceAI/protocol-plugins) (sourced directly via npm — no local copies):
 
 | Key | Contract | Strategy |
 |---|---|---|
@@ -64,7 +64,7 @@ A deployment summary is written to `deployments/<network>-<timestamp>.json` (git
 | `RPC_URL_MAINNET` | For mainnet | — | Mainnet JSON-RPC endpoint |
 | `RPC_URL` | For `--network network` | — | Generic/fallback RPC endpoint |
 | `ORION_CONFIG_ADDRESS` | No | `0xbDe3025d...` (Sepolia) | OrionConfig contract |
-| `VAULT_ADDRESS` | No | — | If set, calls `setVault()` on each deployed contract |
+| `VAULT_ADDRESS` | No | — | If set, vault manager (`PRIVATE_KEY`) calls `updateStrategist()` on this vault. Requires `DEPLOY_CONTRACTS` to name exactly one strategist |
 | `STRATEGIST_K` | No | `10` | Top-K assets to select (1–65535) |
 | `DEPLOY_CONTRACTS` | No | `tvl,apy-equal,apy-weighted` | Comma-separated contracts to deploy |
 | `SKIP_VERIFY` | No | — | Set `1` to skip printing verify commands |
@@ -90,15 +90,15 @@ A deployment summary is written to `deployments/<network>-<timestamp>.json` (git
 
 ## Link a strategist to a vault
 
-Each strategist must be linked to exactly one transparent vault via `setVault()`. This is a one-time, irreversible call.
+Each strategist must be linked to exactly one transparent vault. `setVault()` on the strategist is only callable by the vault itself; the vault manager triggers that by calling `updateStrategist()`. Linking is one-time and irreversible on the strategist.
 
-**Automatic** — set `VAULT_ADDRESS` in `.env` before running `deploy.ts`. The script calls `setVault()` on each deployed contract after deployment.
+**Automatic** — set `VAULT_ADDRESS` and deploy exactly one contract (`DEPLOY_CONTRACTS=tvl`). The deployer (`PRIVATE_KEY`) must be that vault's manager. The script calls `updateStrategist()` on the vault.
 
-**Manual** — call `setVault()` on a deployed strategist:
+**Manual** — call `updateStrategist()` on the vault as its manager:
 
 ```ts
-const strategist = await ethers.getContractAt("KBestTvlWeightedAverage", "0x<STRATEGIST_ADDR>");
-await strategist.setVault("0x<VAULT_ADDR>");
+const vault = await ethers.getContractAt("OrionTransparentVault", "0x<VAULT_ADDR>");
+await vault.updateStrategist("0x<STRATEGIST_ADDR>");
 ```
 
 ---
@@ -196,10 +196,11 @@ Logs are written to `logs/iorion-strategist-template.log` in the repo root (see 
 
 ## Keeping contracts up to date
 
-Contract source lives in the public [OrionFinanceAI/protocol](https://github.com/OrionFinanceAI/protocol) repo. To pull the latest version:
+Contract source lives in the public [OrionFinanceAI/protocol-plugins](https://github.com/OrionFinanceAI/protocol-plugins) repo. The package is pinned to a git SHA in `package.json`. `npm update` will not move that pin — change the SHA, then reinstall:
 
 ```bash
-npm update @orion-finance/protocol
+# Edit the @orion-finance/plugins commit SHA in package.json, then:
+npm install
 npm run compile
 ```
 
@@ -222,6 +223,7 @@ contract MyStrategist is IOrionStrategist, ERC165 {
 
     function setVault(address vault_) external {
         require(_vault == address(0), "already linked");
+        require(msg.sender == vault_, "not authorized");
         _vault = vault_;
     }
 

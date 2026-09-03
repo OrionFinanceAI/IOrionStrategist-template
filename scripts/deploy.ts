@@ -12,7 +12,7 @@
  *
  * Optional env:
  *   ORION_CONFIG_ADDRESS    — default: 0xbDe3025d08681a02a1c6cf70375baBe2152DD06f (Sepolia)
- *   VAULT_ADDRESS           — if set, calls setVault() on each deployed contract
+ *   VAULT_ADDRESS           — if set, vault manager calls updateStrategist() (one strategist)
  *   STRATEGIST_K            — top-K count, default: 10
  *   DEPLOY_CONTRACTS        — comma-separated subset to deploy, default: "tvl,apy-equal,apy-weighted"
  *                             e.g. DEPLOY_CONTRACTS=tvl  or  DEPLOY_CONTRACTS=apy-equal,apy-weighted
@@ -27,6 +27,7 @@ import hre from "hardhat";
 import type { HardhatEthers } from "@nomicfoundation/hardhat-ethers/types";
 import fs from "node:fs";
 import path from "node:path";
+import { linkDeployedStrategistsToVault } from "./lib/linkVault.js";
 
 const DEFAULT_ORION_CONFIG = "0xbDe3025d08681a02a1c6cf70375baBe2152DD06f";
 const WEIGHTING_EQUAL = 0n;
@@ -74,13 +75,18 @@ async function main(): Promise<void> {
   const deploy = parseDeployContracts();
 
   if (k === 0n || k > 65535n) throw new Error("STRATEGIST_K must be in range 1–65535");
+  if (vaultAddr && deploy.size !== 1) {
+    throw new Error(
+      "VAULT_ADDRESS requires DEPLOY_CONTRACTS to name exactly one strategist (a vault has a single strategist).",
+    );
+  }
 
   console.log(`Network:         ${networkName}`);
   console.log(`Deployer:        ${deployer.address}`);
   console.log(`OrionConfig:     ${configAddr}`);
   console.log(`K:               ${k}`);
   console.log(`Deploying:       ${[...deploy].join(", ")}`);
-  if (vaultAddr) console.log(`Vault (setVault): ${vaultAddr}`);
+  if (vaultAddr) console.log(`Vault (updateStrategist): ${vaultAddr}`);
   console.log();
 
   const deployed: { key: ContractKey; label: string; address: string; constructorArgs: (string | bigint | number)[] }[] =
@@ -123,16 +129,15 @@ async function main(): Promise<void> {
     throw new Error("DEPLOY_CONTRACTS matched nothing — check the value.");
   }
 
-  // ── setVault (optional) ───────────────────────────────────────────────────
+  // ── updateStrategist (optional) ────────────────────────────────────────────
   if (vaultAddr) {
-    console.log(`\nLinking strategists to vault ${vaultAddr}...`);
-    const VAULT_ABI = ["function setVault(address) external"];
-    for (const { label, address } of deployed) {
-      const contract = new ethers.Contract(address, VAULT_ABI, deployer);
-      const tx = await contract.setVault(vaultAddr);
-      await tx.wait(confirmations);
-      console.log(`  setVault ok: ${label}`);
-    }
+    await linkDeployedStrategistsToVault({
+      ethers,
+      deployer,
+      vaultAddr,
+      deployed,
+      confirmations,
+    });
   }
 
   // ── Etherscan verify commands (live networks only) ────────────────────────
