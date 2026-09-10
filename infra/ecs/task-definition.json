@@ -11,6 +11,7 @@
     "       aws secretsmanager create-secret --name orion/PRIVATE_KEY    --secret-string '0x...'",
     "       aws secretsmanager create-secret --name orion/RPC_URL_MAINNET --secret-string 'https://...'",
     "       aws secretsmanager create-secret --name orion/VAULT_ADDRESS   --secret-string '0xAAA...,0xBBB...'",
+    "       aws secretsmanager create-secret --name orion/MAINNET_ORION_CONFIG_ADDRESS --secret-string '0x...'",
     "",
     "  3. Register this task definition (replace placeholders):",
     "       aws ecs register-task-definition --cli-input-json file://infra/ecs/task-definition.json",
@@ -85,6 +86,10 @@
         {
           "name": "VAULT_ADDRESS",
           "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:orion/VAULT_ADDRESS"
+        },
+        {
+          "name": "MAINNET_ORION_CONFIG_ADDRESS",
+          "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:orion/MAINNET_ORION_CONFIG_ADDRESS"
         }
       ],
       "logConfiguration": {
