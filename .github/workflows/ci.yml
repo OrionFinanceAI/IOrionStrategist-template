@@ -29,3 +29,73 @@ jobs:
       - run: npx hardhat compile
       - run: npx tsc --noEmit
       - run: npm test
+
+  trivy-fs:
+    name: Trivy fs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Trivy fs report
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          ignore-unfixed: true
+          format: table
+          severity: CRITICAL,HIGH,MEDIUM
+          exit-code: "0"
+
+      - name: Trivy fs fail on CRITICAL
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          ignore-unfixed: true
+          format: table
+          severity: CRITICAL
+          exit-code: "1"
+          skip-setup-trivy: true
+
+  trivy-image:
+    name: Trivy image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Build image
+        run: docker build -f infra/ecs/Dockerfile -t iorion-strategist-template:${{ github.sha }} .
+
+      - name: Trivy image report
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: image
+          image-ref: iorion-strategist-template:${{ github.sha }}
+          ignore-unfixed: true
+          format: table
+          severity: CRITICAL,HIGH,MEDIUM
+          exit-code: "0"
+
+      - name: Trivy image fail on CRITICAL
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: image
+          image-ref: iorion-strategist-template:${{ github.sha }}
+          ignore-unfixed: true
+          format: table
+          severity: CRITICAL
+          exit-code: "1"
+          skip-setup-trivy: true
+
