@@ -49,12 +49,14 @@ const config = defineConfig({
       if (!/^0x[0-9a-fA-F]{64}$/.test(pk)) return {};
       const accounts = [pk];
       const networks: Record<string, object> = {};
-      const sepoliaRpc = process.env.RPC_URL_SEPOLIA ?? "";
-      const mainnetRpc = process.env.RPC_URL_MAINNET ?? "";
-      const genericRpc = process.env.RPC_URL ?? "";
-      if (sepoliaRpc) networks["sepolia"] = { type: "http", chainType: "l1", url: sepoliaRpc, accounts, chainId: 11155111 };
-      if (mainnetRpc) networks["mainnet"] = { type: "http", chainType: "l1", url: mainnetRpc, accounts, chainId: 1 };
-      if (genericRpc) networks["network"]  = { type: "http", chainType: "l1", url: genericRpc, accounts };
+      const sepoliaRpc = process.env.SEPOLIA_RPC_URL?.trim() ?? "";
+      const mainnetRpc = process.env.MAINNET_RPC_URL?.trim() ?? "";
+      if (sepoliaRpc) {
+        networks["sepolia"] = { type: "http", chainType: "l1", url: sepoliaRpc, accounts, chainId: 11155111 };
+      }
+      if (mainnetRpc) {
+        networks["mainnet"] = { type: "http", chainType: "l1", url: mainnetRpc, accounts, chainId: 1 };
+      }
       return networks;
     })(),
   },

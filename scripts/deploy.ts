@@ -8,7 +8,7 @@
  *
  * Required env:
  *   PRIVATE_KEY             — deployer; becomes the strategist owner (calls submitIntent)
- *   RPC_URL                 — JSON-RPC endpoint
+ *   SEPOLIA_RPC_URL / MAINNET_RPC_URL — Hardhat network RPC (no bare RPC_URL)
  *   SEPOLIA_ORION_CONFIG_ADDRESS or MAINNET_ORION_CONFIG_ADDRESS — keyed by `--network`
  *                             (no ORION_CONFIG_ADDRESS, no default)
  *

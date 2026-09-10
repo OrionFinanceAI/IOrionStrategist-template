@@ -60,9 +60,8 @@ A deployment summary is written to `deployments/<network>-<timestamp>.json` (git
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `PRIVATE_KEY` | Yes | — | Deployer key; becomes strategist owner |
-| `RPC_URL_SEPOLIA` | For Sepolia | — | Sepolia JSON-RPC endpoint |
-| `RPC_URL_MAINNET` | For mainnet | — | Mainnet JSON-RPC endpoint |
-| `RPC_URL` | For `--network network` | — | Generic/fallback RPC endpoint |
+| `SEPOLIA_RPC_URL` | For Sepolia | — | Sepolia JSON-RPC endpoint |
+| `MAINNET_RPC_URL` | For mainnet | — | Mainnet JSON-RPC endpoint |
 | `SEPOLIA_ORION_CONFIG_ADDRESS` | Yes if `--network` is sepolia / hardhat / localhost | — | OrionConfig contract |
 | `MAINNET_ORION_CONFIG_ADDRESS` | Yes if `--network mainnet` | — | OrionConfig contract |
 | `VAULT_ADDRESS` | No | — | If set, vault manager (`PRIVATE_KEY`) calls `updateStrategist()` on this vault. Requires `DEPLOY_CONTRACTS` to name exactly one strategist |
@@ -181,7 +180,7 @@ Logs are written to `logs/iorion-strategist-template.log` in the repo root (see 
 
    ```bash
    aws secretsmanager create-secret --name orion/PRIVATE_KEY     --secret-string '0x...'
-   aws secretsmanager create-secret --name orion/RPC_URL_MAINNET  --secret-string 'https://...'
+   aws secretsmanager create-secret --name orion/MAINNET_RPC_URL --secret-string 'https://...'
    aws secretsmanager create-secret --name orion/VAULT_ADDRESS    --secret-string '0xAAA...,0xBBB...'
    aws secretsmanager create-secret --name orion/MAINNET_ORION_CONFIG_ADDRESS --secret-string '0x...'
    ```
