@@ -18,7 +18,7 @@ This template deploys the following strategists from [`protocol-plugins`](https:
 
 ## Prerequisites
 
-- Node.js ≥ 22
+- Node.js ≥ 24
 - npm
 
 ---

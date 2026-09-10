@@ -4,7 +4,7 @@
   "description": "Template for deploying and automating IOrionStrategist contracts against the Orion Finance protocol",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24"
   },
   "scripts": {
     "prepare": "husky",
