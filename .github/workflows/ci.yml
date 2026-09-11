@@ -51,6 +51,7 @@ jobs:
           format: table
           severity: CRITICAL,HIGH,MEDIUM
           exit-code: "0"
+          trivyignores: .trivyignore.yaml
 
       - name: Trivy fs fail on CRITICAL
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
@@ -62,6 +63,7 @@ jobs:
           severity: CRITICAL
           exit-code: "1"
           skip-setup-trivy: true
+          trivyignores: .trivyignore.yaml
 
   trivy-image:
     name: Trivy image
@@ -87,6 +89,7 @@ jobs:
           format: table
           severity: CRITICAL,HIGH,MEDIUM
           exit-code: "0"
+          trivyignores: .trivyignore.yaml
 
       - name: Trivy image fail on CRITICAL
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
@@ -98,4 +101,5 @@ jobs:
           severity: CRITICAL
           exit-code: "1"
           skip-setup-trivy: true
+          trivyignores: .trivyignore.yaml
 
