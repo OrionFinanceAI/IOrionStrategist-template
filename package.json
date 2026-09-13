@@ -22,7 +22,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^5.6.0",
     "@orion-finance/plugins": "github:OrionFinanceAI/protocol-plugins#fe048dff2b5ca363f698dc88b7e24c1d50591863",
-    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#c7d6b5038a295057bba825ad9546a721562eeb52"
+    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#abis-v2.7.6"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.9",
