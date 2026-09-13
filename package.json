@@ -4,7 +4,7 @@
   "description": "Template for deploying and automating IOrionStrategist contracts against the Orion Finance protocol",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24"
   },
   "scripts": {
     "prepare": "husky",
@@ -22,7 +22,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^5.6.0",
     "@orion-finance/plugins": "github:OrionFinanceAI/protocol-plugins#fe048dff2b5ca363f698dc88b7e24c1d50591863",
-    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#664f7a87ad1d8348599b47915df262e012e6cfad"
+    "@orion-finance/protocol": "github:OrionFinanceAI/protocol#abis-v2.7.6"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.9",

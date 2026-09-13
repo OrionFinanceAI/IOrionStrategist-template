@@ -1,0 +1,11 @@
+# False positive: OpenZeppelin GHSA-fg47-3c2x-m2wr / CVE-2021-39167 lists
+# 3.4.2-solc-0.7 as a fixed release alongside 3.4.2 and 4.3.1. Trivy's DB only
+# treats 3.4.2 / 4.3.1 as fixed, so it still flags the solc-0.7 build pulled
+# transitively via @uniswap/v3-periphery → @orion-finance/protocol.
+vulnerabilities:
+  - id: CVE-2021-39167
+    purls:
+      - pkg:npm/@openzeppelin/contracts@3.4.2-solc-0.7
+    statement: >-
+      3.4.2-solc-0.7 is an OZ fixed release for this CVE; Trivy version matching
+      does not treat the -solc-0.7 build as fixed.

@@ -18,7 +18,7 @@ This template deploys the following strategists from [`protocol-plugins`](https:
 
 ## Prerequisites
 
-- Node.js ≥ 22
+- Node.js ≥ 24
 - npm
 
 ---
@@ -30,7 +30,7 @@ git clone https://github.com/OrionFinanceAI/IOrionStrategist-template.git
 cd IOrionStrategist-template
 npm install
 cp .env.example .env
-# Edit .env with your RPC_URL, PRIVATE_KEY, and ORION_CONFIG_ADDRESS
+# Edit .env with your RPC URLs, PRIVATE_KEY, and SEPOLIA_ORION_CONFIG_ADDRESS / MAINNET_ORION_CONFIG_ADDRESS
 npm run compile
 ```
 
@@ -60,10 +60,10 @@ A deployment summary is written to `deployments/<network>-<timestamp>.json` (git
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `PRIVATE_KEY` | Yes | — | Deployer key; becomes strategist owner |
-| `RPC_URL_SEPOLIA` | For Sepolia | — | Sepolia JSON-RPC endpoint |
-| `RPC_URL_MAINNET` | For mainnet | — | Mainnet JSON-RPC endpoint |
-| `RPC_URL` | For `--network network` | — | Generic/fallback RPC endpoint |
-| `ORION_CONFIG_ADDRESS` | No | `0xbDe3025d...` (Sepolia) | OrionConfig contract |
+| `SEPOLIA_RPC_URL` | For Sepolia | — | Sepolia JSON-RPC endpoint |
+| `MAINNET_RPC_URL` | For mainnet | — | Mainnet JSON-RPC endpoint |
+| `SEPOLIA_ORION_CONFIG_ADDRESS` | Yes if `--network` is sepolia / hardhat / localhost | — | OrionConfig contract |
+| `MAINNET_ORION_CONFIG_ADDRESS` | Yes if `--network mainnet` | — | OrionConfig contract |
 | `VAULT_ADDRESS` | No | — | If set, vault manager (`PRIVATE_KEY`) calls `updateStrategist()` on this vault. Requires `DEPLOY_CONTRACTS` to name exactly one strategist |
 | `STRATEGIST_K` | No | `10` | Top-K assets to select (1–65535) |
 | `DEPLOY_CONTRACTS` | No | `tvl,apy-equal,apy-weighted` | Comma-separated contracts to deploy |
@@ -180,8 +180,9 @@ Logs are written to `logs/iorion-strategist-template.log` in the repo root (see 
 
    ```bash
    aws secretsmanager create-secret --name orion/PRIVATE_KEY     --secret-string '0x...'
-   aws secretsmanager create-secret --name orion/RPC_URL_MAINNET  --secret-string 'https://...'
+   aws secretsmanager create-secret --name orion/MAINNET_RPC_URL --secret-string 'https://...'
    aws secretsmanager create-secret --name orion/VAULT_ADDRESS    --secret-string '0xAAA...,0xBBB...'
+   aws secretsmanager create-secret --name orion/MAINNET_ORION_CONFIG_ADDRESS --secret-string '0x...'
    ```
 
 3. **Register the task** — fill in the `<PLACEHOLDERS>` in `infra/ecs/task-definition.json`, then:

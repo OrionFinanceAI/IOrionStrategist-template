@@ -8,10 +8,11 @@
  *
  * Required env:
  *   PRIVATE_KEY             — deployer; becomes the strategist owner (calls submitIntent)
- *   RPC_URL                 — JSON-RPC endpoint
+ *   SEPOLIA_RPC_URL / MAINNET_RPC_URL — Hardhat network RPC (no bare RPC_URL)
+ *   SEPOLIA_ORION_CONFIG_ADDRESS or MAINNET_ORION_CONFIG_ADDRESS — keyed by `--network`
+ *                             (no ORION_CONFIG_ADDRESS, no default)
  *
  * Optional env:
- *   ORION_CONFIG_ADDRESS    — default: 0xbDe3025d08681a02a1c6cf70375baBe2152DD06f (Sepolia)
  *   VAULT_ADDRESS           — if set, vault manager calls updateStrategist() (one strategist)
  *   STRATEGIST_K            — top-K count, default: 10
  *   DEPLOY_CONTRACTS        — comma-separated subset to deploy, default: "tvl,apy-equal,apy-weighted"
@@ -28,8 +29,8 @@ import type { HardhatEthers } from "@nomicfoundation/hardhat-ethers/types";
 import fs from "node:fs";
 import path from "node:path";
 import { linkDeployedStrategistsToVault } from "./lib/linkVault.js";
+import { resolveOrionConfigAddress } from "./lib/orion-config-env.js";
 
-const DEFAULT_ORION_CONFIG = "0xbDe3025d08681a02a1c6cf70375baBe2152DD06f";
 const WEIGHTING_EQUAL = 0n;
 const WEIGHTING_APY = 1n;
 
@@ -68,7 +69,7 @@ function printVerifyCmd(network: string, address: string, constructorArgs: (stri
 async function main(): Promise<void> {
   const pk = requireEnv("PRIVATE_KEY");
   const deployer = new ethers.Wallet(pk, ethers.provider);
-  const configAddr = ethers.getAddress(process.env.ORION_CONFIG_ADDRESS ?? DEFAULT_ORION_CONFIG);
+  const configAddr = resolveOrionConfigAddress(networkName);
   const vaultAddr = process.env.VAULT_ADDRESS ? ethers.getAddress(process.env.VAULT_ADDRESS) : null;
   const k = BigInt(process.env.STRATEGIST_K ?? "10");
   const skipVerify = process.env.SKIP_VERIFY === "1";
