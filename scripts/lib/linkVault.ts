@@ -25,7 +25,7 @@ export async function linkDeployedStrategistsToVault(opts: {
   const { ethers, deployer, vaultAddr, deployed, confirmations } = opts;
   if (deployed.length !== 1) {
     throw new Error(
-      "VAULT_ADDRESS requires exactly one deployed strategist. A vault has a single strategist — set DEPLOY_CONTRACTS to one of: tvl, apy-equal, apy-weighted.",
+      "VAULT_ADDRESS requires exactly one deployed strategist. A vault has a single strategist - set DEPLOY_CONTRACTS to one of: tvl, apy-equal, apy-weighted.",
     );
   }
 

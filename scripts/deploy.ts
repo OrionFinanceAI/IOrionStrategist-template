@@ -2,22 +2,22 @@
  * Deploy IOrionStrategist contracts and optionally link them to a vault.
  *
  * Available contracts:
- *   tvl          — KBestTvlWeightedAverage (top-K by TVL, TVL-proportional weights)
- *   apy-equal    — KBestApyStrategist EqualWeighted (top-K by APY, equal weights)
- *   apy-weighted — KBestApyStrategist ApyWeighted (top-K by APY, APY-proportional weights)
+ *   tvl          - KBestTvlWeightedAverage (top-K by TVL, TVL-proportional weights)
+ *   apy-equal    - KBestApyStrategist EqualWeighted (top-K by APY, equal weights)
+ *   apy-weighted - KBestApyStrategist ApyWeighted (top-K by APY, APY-proportional weights)
  *
  * Required env:
- *   PRIVATE_KEY             — deployer; becomes the strategist owner (calls submitIntent)
- *   SEPOLIA_RPC_URL / MAINNET_RPC_URL — Hardhat network RPC (no bare RPC_URL)
- *   SEPOLIA_ORION_CONFIG_ADDRESS or MAINNET_ORION_CONFIG_ADDRESS — keyed by `--network`
+ *   PRIVATE_KEY             - deployer; becomes the strategist owner (calls submitIntent)
+ *   SEPOLIA_RPC_URL / MAINNET_RPC_URL - Hardhat network RPC (no bare RPC_URL)
+ *   SEPOLIA_ORION_CONFIG_ADDRESS or MAINNET_ORION_CONFIG_ADDRESS - keyed by `--network`
  *                             (no ORION_CONFIG_ADDRESS, no default)
  *
  * Optional env:
- *   VAULT_ADDRESS           — if set, vault manager calls updateStrategist() (one strategist)
- *   STRATEGIST_K            — top-K count, default: 10
- *   DEPLOY_CONTRACTS        — comma-separated subset to deploy, default: "tvl,apy-equal,apy-weighted"
+ *   VAULT_ADDRESS           - if set, vault manager calls updateStrategist() (one strategist)
+ *   STRATEGIST_K            - top-K count, default: 10
+ *   DEPLOY_CONTRACTS        - comma-separated subset to deploy, default: "tvl,apy-equal,apy-weighted"
  *                             e.g. DEPLOY_CONTRACTS=tvl  or  DEPLOY_CONTRACTS=apy-equal,apy-weighted
- *   SKIP_VERIFY             — set "1" to skip printing Etherscan verify commands
+ *   SKIP_VERIFY             - set "1" to skip printing Etherscan verify commands
  *
  * Usage:
  *   npx hardhat run scripts/deploy.ts --network sepolia
@@ -104,7 +104,7 @@ async function main(): Promise<void> {
     deployed.push({ key: "tvl", label: "KBestTvlWeightedAverage", address, constructorArgs: [deployer.address, configAddr, k] });
   }
 
-  // ── KBestApyStrategist — EqualWeighted ───────────────────────────────────
+  // ── KBestApyStrategist - EqualWeighted ───────────────────────────────────
   if (deploy.has("apy-equal")) {
     console.log("Deploying KBestApyStrategist (EqualWeighted)...");
     const Factory = await ethers.getContractFactory("KBestApyStrategist", deployer);
@@ -115,7 +115,7 @@ async function main(): Promise<void> {
     deployed.push({ key: "apy-equal", label: "KBestApyStrategist (EqualWeighted)", address, constructorArgs: [deployer.address, configAddr, k, WEIGHTING_EQUAL] });
   }
 
-  // ── KBestApyStrategist — ApyWeighted ─────────────────────────────────────
+  // ── KBestApyStrategist - ApyWeighted ─────────────────────────────────────
   if (deploy.has("apy-weighted")) {
     console.log("Deploying KBestApyStrategist (ApyWeighted)...");
     const Factory = await ethers.getContractFactory("KBestApyStrategist", deployer);
@@ -127,7 +127,7 @@ async function main(): Promise<void> {
   }
 
   if (deployed.length === 0) {
-    throw new Error("DEPLOY_CONTRACTS matched nothing — check the value.");
+    throw new Error("DEPLOY_CONTRACTS matched nothing - check the value.");
   }
 
   // ── updateStrategist (optional) ────────────────────────────────────────────

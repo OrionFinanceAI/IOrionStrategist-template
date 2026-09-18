@@ -25,14 +25,14 @@ if [[ ! -f "${REPO_DIR}/.env" ]]; then
 fi
 
 if ! grep -q "^PRIVATE_KEY=" "${REPO_DIR}/.env" 2>/dev/null; then
-  echo "Warning: PRIVATE_KEY not found in .env — the cron job will fail at runtime." >&2
+  echo "Warning: PRIVATE_KEY not found in .env - the cron job will fail at runtime." >&2
 fi
 
 CRON_LINE="0 */4 * * * cd ${REPO_DIR} && set -a && . ${REPO_DIR}/.env && set +a && npx hardhat run scripts/update-intents.ts --network ${NETWORK} >> ${LOG_FILE} 2>&1"
 
 if [[ "${1:-}" == "--install" ]]; then
   if crontab -l 2>/dev/null | grep -Fx "${CRON_LINE}" > /dev/null; then
-    echo "Crontab entry already exists — nothing changed."
+    echo "Crontab entry already exists - nothing changed."
     exit 0
   fi
   (crontab -l 2>/dev/null; echo "${CRON_LINE}") | crontab -
