@@ -3,16 +3,16 @@
  * IOrionStrategist. The signer must be the owner of each strategist contract.
  *
  * Required env:
- *   PRIVATE_KEY     — strategist owner private key
- *   VAULT_ADDRESS   — vault address, or comma-separated list of vault addresses
+ *   PRIVATE_KEY     - strategist owner private key
+ *   VAULT_ADDRESS   - vault address, or comma-separated list of vault addresses
  *
  * Optional env:
- *   ORION_STRATEGIST_INTERFACE_ID   — if set, only this bytes4 is checked (no fallback)
- *   DRY_RUN=1                       — log only, no transactions sent
+ *   ORION_STRATEGIST_INTERFACE_ID   - if set, only this bytes4 is checked (no fallback)
+ *   DRY_RUN=1                       - log only, no transactions sent
  *
  * ERC-165 interface IDs (both checked by default):
- *   0x2a588280 — type(IOrionStrategist).interfaceId  (IERC165 ^ setVault ^ submitIntent)
- *   0x2ba74b27 — setVault(address) ⊕ submitIntent()  (some on-chain deployments use this)
+ *   0x2a588280 - type(IOrionStrategist).interfaceId  (IERC165 ^ setVault ^ submitIntent)
+ *   0x2ba74b27 - setVault(address) ⊕ submitIntent()  (some on-chain deployments use this)
  *
  * Exit code 1 if any submitIntent() call failed.
  *

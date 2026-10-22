@@ -6,7 +6,7 @@ Clone this repo, fill in a `.env`, and you're ready to deploy or run automated r
 
 ## Strategist contracts
 
-This template deploys the following strategists from [`protocol-plugins`](https://github.com/OrionFinanceAI/protocol-plugins) (sourced directly via npm — no local copies):
+This template deploys the following strategists from [`protocol-plugins`](https://github.com/OrionFinanceAI/protocol-plugins) (sourced directly via npm - no local copies):
 
 | Key | Contract | Strategy |
 |---|---|---|
@@ -59,16 +59,16 @@ A deployment summary is written to `deployments/<network>-<timestamp>.json` (git
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `PRIVATE_KEY` | Yes | — | Deployer key; becomes strategist owner |
-| `SEPOLIA_RPC_URL` | For Sepolia | — | Sepolia JSON-RPC endpoint |
-| `MAINNET_RPC_URL` | For mainnet | — | Mainnet JSON-RPC endpoint |
-| `SEPOLIA_ORION_CONFIG_ADDRESS` | Yes if `--network` is sepolia / hardhat / localhost | — | OrionConfig contract |
-| `MAINNET_ORION_CONFIG_ADDRESS` | Yes if `--network mainnet` | — | OrionConfig contract |
-| `VAULT_ADDRESS` | No | — | If set, vault manager (`PRIVATE_KEY`) calls `updateStrategist()` on this vault. Requires `DEPLOY_CONTRACTS` to name exactly one strategist |
+| `PRIVATE_KEY` | Yes | - | Deployer key; becomes strategist owner |
+| `SEPOLIA_RPC_URL` | For Sepolia | - | Sepolia JSON-RPC endpoint |
+| `MAINNET_RPC_URL` | For mainnet | - | Mainnet JSON-RPC endpoint |
+| `SEPOLIA_ORION_CONFIG_ADDRESS` | Yes if `--network` is sepolia / hardhat / localhost | - | OrionConfig contract |
+| `MAINNET_ORION_CONFIG_ADDRESS` | Yes if `--network mainnet` | - | OrionConfig contract |
+| `VAULT_ADDRESS` | No | - | If set, vault manager (`PRIVATE_KEY`) calls `updateStrategist()` on this vault. Requires `DEPLOY_CONTRACTS` to name exactly one strategist |
 | `STRATEGIST_K` | No | `10` | Top-K assets to select (1–65535) |
 | `DEPLOY_CONTRACTS` | No | `tvl,apy-equal,apy-weighted` | Comma-separated contracts to deploy |
-| `SKIP_VERIFY` | No | — | Set `1` to skip printing verify commands |
-| `ETHERSCAN_API_KEY` | No | — | Needed to run `hardhat verify` after deployment |
+| `SKIP_VERIFY` | No | - | Set `1` to skip printing verify commands |
+| `ETHERSCAN_API_KEY` | No | - | Needed to run `hardhat verify` after deployment |
 
 ### Deployment output
 
@@ -92,9 +92,9 @@ A deployment summary is written to `deployments/<network>-<timestamp>.json` (git
 
 Each strategist must be linked to exactly one transparent vault. `setVault()` on the strategist is only callable by the vault itself; the vault manager triggers that by calling `updateStrategist()`. Linking is one-time and irreversible on the strategist.
 
-**Automatic** — set `VAULT_ADDRESS` and deploy exactly one contract (`DEPLOY_CONTRACTS=tvl`). The deployer (`PRIVATE_KEY`) must be that vault's manager. The script calls `updateStrategist()` on the vault.
+**Automatic** - set `VAULT_ADDRESS` and deploy exactly one contract (`DEPLOY_CONTRACTS=tvl`). The deployer (`PRIVATE_KEY`) must be that vault's manager. The script calls `updateStrategist()` on the vault.
 
-**Manual** — call `updateStrategist()` on the vault as its manager:
+**Manual** - call `updateStrategist()` on the vault as its manager:
 
 ```ts
 const vault = await ethers.getContractAt("OrionTransparentVault", "0x<VAULT_ADDR>");
@@ -139,22 +139,22 @@ Dry-run (no transactions, all vaults still resolved and checked):
 DRY_RUN=1 VAULT_ADDRESS=0xAAA...,0xBBB... npx hardhat run scripts/update-intents.ts --network sepolia
 ```
 
-Exit code is `1` on any failure — including vault read errors (e.g. `strategist()` reverts or the strategist fails the ERC-165 check) as well as failed `submitIntent()` calls — useful for cron/ECS alerting.
+Exit code is `1` on any failure - including vault read errors (e.g. `strategist()` reverts or the strategist fails the ERC-165 check) as well as failed `submitIntent()` calls - useful for cron/ECS alerting.
 
 ### Environment variables
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `PRIVATE_KEY` | Yes | — | Strategist owner key |
-| `VAULT_ADDRESS` | Yes | — | Vault address or comma-separated list of vault addresses |
-| `ORION_STRATEGIST_INTERFACE_ID` | No | — | Override ERC-165 check to a specific bytes4 |
-| `DRY_RUN` | No | — | Set `1` to log only — no transactions sent |
+| `PRIVATE_KEY` | Yes | - | Strategist owner key |
+| `VAULT_ADDRESS` | Yes | - | Vault address or comma-separated list of vault addresses |
+| `ORION_STRATEGIST_INTERFACE_ID` | No | - | Override ERC-165 check to a specific bytes4 |
+| `DRY_RUN` | No | - | Set `1` to log only - no transactions sent |
 
 ---
 
 ## Automated rebalancing
 
-### Option A — Cron job
+### Option A - Cron job
 
 ```bash
 # Preview the crontab line
@@ -166,9 +166,9 @@ NETWORK=mainnet bash infra/cron/setup.sh --install
 
 Logs are written to `logs/iorion-strategist-template.log` in the repo root (see `infra/cron/setup.sh`).
 
-### Option B — AWS ECS (Fargate + EventBridge)
+### Option B - AWS ECS (Fargate + EventBridge)
 
-1. **Build and push the image** (tag with the commit SHA — CI uses the same strategy)
+1. **Build and push the image** (tag with the commit SHA - CI uses the same strategy)
 
    ```bash
    GIT_SHA=$(git rev-parse --short HEAD)
@@ -185,19 +185,19 @@ Logs are written to `logs/iorion-strategist-template.log` in the repo root (see 
    aws secretsmanager create-secret --name orion/MAINNET_ORION_CONFIG_ADDRESS --secret-string '0x...'
    ```
 
-3. **Register the task** — fill in the `<PLACEHOLDERS>` in `infra/ecs/task-definition.json`, then:
+3. **Register the task** - fill in the `<PLACEHOLDERS>` in `infra/ecs/task-definition.json`, then:
 
    ```bash
    aws ecs register-task-definition --cli-input-json file://infra/ecs/task-definition.json
    ```
 
-4. **Schedule with EventBridge** — see the `_comment` block in `infra/ecs/task-definition.json` for the full `aws events put-rule` command. The default schedule is every 4 hours (`cron(0 */4 * * ? *)`).
+4. **Schedule with EventBridge** - see the `_comment` block in `infra/ecs/task-definition.json` for the full `aws events put-rule` command. The default schedule is every 4 hours (`cron(0 */4 * * ? *)`).
 
 ---
 
 ## Keeping contracts up to date
 
-Contract source lives in the public [OrionFinanceAI/protocol-plugins](https://github.com/OrionFinanceAI/protocol-plugins) repo. The package is pinned to a git SHA in `package.json`. `npm update` will not move that pin — change the SHA, then reinstall:
+Contract source lives in the public [OrionFinanceAI/protocol-plugins](https://github.com/OrionFinanceAI/protocol-plugins) repo. The package is pinned to a git SHA in `package.json`. `npm update` will not move that pin - change the SHA, then reinstall:
 
 ```bash
 # Edit the @orion-finance/plugins commit SHA in package.json, then:
